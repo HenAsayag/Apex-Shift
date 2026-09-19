@@ -26,6 +26,12 @@ The production game is in `dist/`. Serve that folder with any static HTTP server
 
 ## Driving
 
+### GitHub Pages edition
+
+Play at **https://henasayag.github.io/Apex-Shift/**. The Pages workflow builds the WebGL game with `VITE_STATIC_PAGES=true`, uses `/Apex-Shift/` as the asset base, and publishes only `dist/`. In repository Settings → Pages, select **GitHub Actions** as the source. Pushes to `main` redeploy automatically.
+
+This static edition supports racing, personal shadows, local records, touch controls, and fullscreen. Shared online ghosts are disabled because GitHub Pages cannot run the Node API. Normal `npm run dev`, `npm run build`, and `npm start` retain server-backed sharing.
+
 | Action     | Player 1   | Player 2            | Player 3 | Player 4       |
 | ---------- | ---------- | ------------------- | -------- | -------------- |
 | Accelerate | W          | Up arrow            | I        | Numpad 8       |

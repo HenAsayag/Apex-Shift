@@ -10,6 +10,7 @@ export function runId() {
 
 export class GhostOnline {
   constructor(notify, storage, request = globalThis.fetch.bind(globalThis)) {
+    this.enabled = import.meta.env?.VITE_STATIC_PAGES !== "true";
     this.notify = notify;
     this.storage = storage;
     this.request = request;
@@ -32,6 +33,10 @@ export class GhostOnline {
     }
   }
   async api(path = "", options = {}) {
+    if (!this.enabled)
+      throw new Error(
+        "Online ghosts require a game server. Personal shadows work on this site.",
+      );
     const response = await this.request("/api/ghosts" + path, {
       ...options,
       signal: AbortSignal.timeout(15000),

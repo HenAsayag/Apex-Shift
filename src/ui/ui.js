@@ -83,10 +83,10 @@ export class UI {
       <button class="button glass full" data-ghost="${g.selectedTrack.id}">${best?.ghost ? "RACE PERSONAL GHOST" : "SET YOUR FIRST TIME"} ↗</button>
       <p class="muted">Personal runs stay in this browser. The translucent ghost never collides with your car.</p>
       <hr><h2>Online ghosts</h2><label>Your public driver name<input data-ghost-name maxlength="32" value="${esc(g.save.data.ghostName || g.options.names[0])}"></label>
-      <p>Every completed online run is saved and shared with players on this game server. One lap · clear weather · circuit default time.</p>
-      <button class="button primary full" data-action="online-run">START ONLINE RUN ↗</button>
+      <p>${g.online.enabled ? "Every completed online run is saved and shared with players on this game server. One lap · clear weather · circuit default time." : "This edition supports personal shadows and local play. Shared online ghosts require a game server."}</p>
+      <button class="button primary full" data-action="online-run" ${g.online.enabled ? "" : "disabled"}>START ONLINE RUN ↗</button>
       <p class="muted">Community times are unverified. Display names are not unique accounts.</p>
-      <button class="text-button" data-action="retry-ghosts">RETRY PENDING UPLOADS (${g.online.pending.length})</button>
+      <button class="text-button" data-action="retry-ghosts" ${g.online.enabled ? "" : "disabled"}>RETRY PENDING UPLOADS (${g.online.pending.length})</button>
       </section><section class="panel"><h2>Challenge a ghost</h2>
       <div class="ghost-search"><label>Find a friend or run<input data-ghost-query maxlength="100" placeholder="Driver name or exact run ID" value="${esc(this.ghostQuery || "")}"></label><button class="button glass" data-action="search-ghosts">SEARCH / REFRESH</button></div>
       <p class="muted">Fastest matching runs first. Friends can share the run ID shown after finishing.</p>
@@ -96,6 +96,11 @@ export class UI {
     const request = (this.ghostRequest = (this.ghostRequest || 0) + 1);
     const host = this.app.querySelector("#online-ghost-list");
     if (!host) return;
+    if (!this.g.online.enabled) {
+      host.textContent =
+        "Online ghosts require a game server. Race your personal shadow using the button on the left.";
+      return;
+    }
     host.textContent = "Loading shared ghosts…";
     try {
       const { runs, total } = await this.g.online.list(
@@ -113,6 +118,7 @@ export class UI {
     }
   }
   async onlineRace(id) {
+    if (!this.g.online.enabled) return;
     const request = (this.ghostRequest = (this.ghostRequest || 0) + 1);
     const track = this.g.selectedTrack.id;
     try {
