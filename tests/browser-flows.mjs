@@ -14,6 +14,7 @@ await page.screenshot({ path: "artifacts/home.png" });
 await page.locator('[data-action="race"]').first().click();
 await page.locator("[data-fullscreen]").click();
 await page.waitForFunction(() => __game.state === "racing");
+assert.equal(await page.evaluate(() => __game.options.laps), 3);
 await page.keyboard.down("w");
 await page.waitForTimeout(1500);
 await page.keyboard.down("d");
@@ -45,6 +46,8 @@ await page.keyboard.press("r");
 await page.waitForFunction(() => __game.racers[0].penalty === 3);
 assert.equal(await page.evaluate(() => __game.racers[0].s), 0);
 await page.locator('[data-action="pause"]').click();
+// Keep the existing single-lap records/leaderboard regression in time trial.
+await page.evaluate(() => __game.setMode("time-trial", true));
 await page.locator('[data-action="restart"]').click();
 await page.waitForFunction(() => __game.state === "countdown");
 // Drive a complete race through the same physics and checkpoint loop with the AI input source.

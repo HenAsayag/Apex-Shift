@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Open **http://localhost:5187** in a desktop browser with WebGL 2 and hardware acceleration enabled. Click **LET’S RACE** to start a one-lap race in Redline Canyon. Audio begins after the first click or race start.
+Open **http://localhost:5187** in a desktop browser with WebGL 2 and hardware acceleration enabled. Click **LET’S RACE** to start a three-lap race in Redline Canyon. Audio begins after the first click or race start.
 
 If the default npm cache is restricted in your environment, use `npm install --cache .npm-cache`.
 
@@ -59,7 +59,7 @@ Keyboard rollover differs by hardware. If four players cannot hold all their key
 
 ## Modes
 
-- **Quick Race** — immediately race the selected circuit for a medal.
+- **Quick Race** — immediately race the selected circuit for at least three laps, with a personal shadow for the matching lap count.
 - **Career** — progress through Ignition Series, Velocity Cup, and Limitless Tour. Earn Bronze or better on distinct circuits to unlock the next cup at 3 and 6 medals.
 - **Time Trial** — race the ghost of the fastest recorded run for that circuit and configuration.
 - **AI Race** — race up to five opponents with Easy, Normal, Hard, or Expert difficulty. Rivals use the same driving physics as humans. Optional catch-up is capped at ±4% of the AI target speed.

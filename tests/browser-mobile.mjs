@@ -28,6 +28,8 @@ try {
   await page.waitForFunction(() => __game.state === "racing");
   assert.ok(await page.evaluate(() => !!document.fullscreenElement));
   assert.ok(await page.evaluate(() => __game.shadowEnabled));
+  assert.equal(await page.evaluate(() => __game.options.laps), 3);
+  assert.match(await page.locator(".hud-lap").innerText(), /1 \/ 3/);
   await page.locator('[data-drive="boost"]').waitFor({ state: "visible" });
   assert.equal(await page.locator("[data-drive]").count(), 4);
   const cdp = await context.newCDPSession(page);
@@ -113,6 +115,7 @@ try {
   await page.locator('[data-action="restart"]').click();
   await page.waitForFunction(() => __game.state === "countdown");
   assert.equal(await page.evaluate(() => __game.mode), "quick");
+  assert.equal(await page.evaluate(() => __game.options.laps), 3);
   assert.ok(await page.evaluate(() => !!__game.world.ghost));
   await page.evaluate(() => __game.quit());
   await page.evaluate(() => document.exitFullscreen());

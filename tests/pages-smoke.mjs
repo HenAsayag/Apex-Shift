@@ -40,6 +40,7 @@ try {
     await page.locator('[data-action="race"]').first().click();
     await page.locator("[data-fullscreen]").click();
     await page.locator(".player-hud").waitFor();
+    assert.match(await page.locator(".hud-lap").innerText(), /1 \/ 3/);
     await page.waitForTimeout(3800);
     if (mobile) {
       const cdp = await context.newCDPSession(page),

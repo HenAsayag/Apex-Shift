@@ -28,7 +28,7 @@ export class Game {
     this.mode = "quick";
     this.state = "menu";
     this.options = {
-      laps: 1,
+      laps: 3,
       players: 1,
       ai: 0,
       difficulty: this.save.data.settings.difficulty,
@@ -84,7 +84,7 @@ export class Game {
     this.mode = mode;
     this.options.players = mode === "local" ? 2 : 1;
     this.options.ai = mode === "ai" ? 5 : mode === "custom" ? 3 : 0;
-    this.options.laps = 1;
+    this.options.laps = mode === "quick" ? 3 : 1;
     this.options.weather = "clear";
     this.options.time = "track";
     if (!silent)
@@ -124,7 +124,8 @@ export class Game {
     ) {
       this.options.players = 1;
       this.options.ai = 0;
-      this.options.laps = 1;
+      this.options.laps =
+        this.mode === "quick" ? Math.max(3, this.options.laps) : 1;
       this.options.weather = "clear";
       this.options.time = "track";
     }
