@@ -1,0 +1,170 @@
+.fullscreen-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #101b23f5;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow: auto;
+}
+.fullscreen-gate section {
+  max-width: 460px;
+  width: 100%;
+  padding: 28px;
+  background: #192a34;
+  border: 1px solid #5e777e;
+  border-radius: 12px;
+}
+.fullscreen-gate h1 {
+  font-size: 32px;
+  margin: 18px 0;
+}
+.fullscreen-gate p {
+  line-height: 1.6;
+  margin: 16px 0;
+}
+.fullscreen-error {
+  color: #ffb59b;
+}
+.touch-controls {
+  display: none;
+}
+.touch-device .touch-controls {
+  display: block;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.touch-controls button {
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  min-width: 58px;
+  min-height: 54px;
+  border: 1px solid #b7e9f09c;
+  border-radius: 12px;
+  background: #132936dc;
+  color: white;
+  font-weight: 800;
+  font-size: 12px;
+}
+.touch-controls button.held {
+  background: #ff7139;
+  color: #111;
+}
+.touch-steering {
+  position: absolute;
+  left: max(14px, env(safe-area-inset-left));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  gap: 12px;
+}
+.touch-steering button {
+  width: 68px;
+  height: 68px;
+  font-size: 22px;
+}
+.touch-pedals {
+  position: absolute;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(2, 64px);
+  gap: 8px;
+}
+.touch-pedals [data-drive="throttle"] {
+  background: #267356;
+}
+.touch-reset {
+  position: absolute;
+  left: max(14px, env(safe-area-inset-left));
+  bottom: 100px;
+  font-size: 10px !important;
+  min-height: 40px !important;
+}
+.touch-device .race-controls,
+.touch-device .hud-minimap {
+  display: none;
+}
+.touch-device .hud-speed {
+  right: 18px;
+  bottom: 156px;
+  width: 110px;
+}
+.touch-device .speed-value {
+  font-size: 46px;
+}
+.touch-device .boost-key {
+  display: none;
+}
+.touch-device .race-top {
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
+}
+.touch-device .race-top button {
+  min-width: 48px;
+  min-height: 44px;
+}
+.touch-device .ghost-hud {
+  top: 76px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  max-width: 38%;
+  padding: 8px 12px;
+  gap: 4px;
+}
+.touch-device .ghost-hud small:last-child {
+  display: none;
+}
+.touch-device .ghost-delta {
+  font-size: 18px;
+}
+.touch-device .hud-timing {
+  top: 74px;
+}
+.touch-device .hud-time {
+  font-size: 28px;
+}
+.touch-device .hud-position {
+  top: 75px;
+}
+.touch-device .hud-position strong {
+  font-size: 30px;
+}
+@media (max-height: 500px) {
+  .touch-device .ghost-hud {
+    top: 60px;
+  }
+  .touch-device .hud-timing {
+    top: 58px;
+  }
+  .touch-device .hud-position {
+    top: 60px;
+  }
+  .touch-device .hud-speed {
+    bottom: 145px;
+  }
+  .touch-device .speed-value {
+    font-size: 32px;
+  }
+  .touch-device .hud-message {
+    display: none;
+  }
+}
+@media (max-width: 540px) {
+  .touch-device .ghost-hud {
+    top: 165px;
+    max-width: 90%;
+    width: 90%;
+  }
+  .touch-device .topbar nav {
+    overflow-x: auto;
+  }
+  .touch-device .nav-link {
+    padding: 0 10px;
+    flex-shrink: 0;
+  }
+}
