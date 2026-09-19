@@ -175,6 +175,7 @@ export class UI {
     return `<div class="page-heading"><div><div class="eyebrow">${kicker}</div><h1>${title}</h1>${sub ? `<p>${sub}</p>` : ""}</div>${extra}</div>`;
   }
   home() {
+    if (this.g.input.touchDevice) return this.mobileHome();
     const track = this.g.selectedTrack;
     return `<div class="hero-copy"><div class="eyebrow"><span class="tiny-line"></span> EVERY MILLISECOND MATTERS</div><h1>FIND<br>YOUR <span>LIMIT.</span></h1><p>Ten worlds. One perfect run.<br>Push harder. Brake later. Make it count.</p><div class="hero-actions"><button class="button primary" data-action="race">LET’S RACE ${arrow}</button><button class="button glass" data-nav="play">EXPLORE MODES <span>→</span></button></div><div class="hero-meta"><span><b>10</b> UNIQUE CIRCUITS</span><span><b>05</b> ORIGINAL MACHINES</span><span><b>04</b> LOCAL PLAYERS</span></div></div><div class="scene-caption"><span class="live-dot"></span> ${esc(this.g.vehicle.name.toUpperCase())}<span class="caption-rule"></span><span>PURE ARCADE. PURE ADRENALINE.</span></div><aside class="featured-event"><div class="event-top"><span class="eyebrow">ON THE GRID</span><span class="live-tag">TIME ATTACK</span></div>${trackMap(track)}<div class="event-title"><small>${track.region}</small><h2>${track.name}</h2></div><div class="event-stats"><div><span>YOUR BEST</span><b>${formatTime(this.g.save.data.records[track.id]?.best)}</b></div><div><span>GOLD TARGET</span><b class="gold">${formatTime(track.medals[1])}</b></div></div><button class="text-button" data-action="time-trial">BEAT THE CLOCK <span>↗</span></button></aside><section class="discover-section"><div class="section-title"><h2>THE WORLD IS YOUR RACETRACK<span> PICK YOUR NEXT CHALLENGE</span></h2><button data-nav="tracks">VIEW ALL CIRCUITS <span>↗</span></button></div><div class="featured-tracks">${TRACKS.slice(
       0,
@@ -182,6 +183,10 @@ export class UI {
     )
       .map((tr, i) => this.trackCard(tr, i, true))
       .join("")}</div></section>`;
+  }
+  mobileHome() {
+    const g = this.g;
+    return `<section class="mobile-home"><div class="mobile-intro"><div class="eyebrow">APEX // SHIFT</div><h1>READY TO RACE?</h1><p>${esc(g.vehicle.name)} · Shadow Mode on</p></div><div class="mobile-race-card"><label for="mobile-circuit">CIRCUIT</label><select id="mobile-circuit" data-option="track">${TRACKS.map((tr) => `<option value="${tr.id}" ${tr.id === g.selectedTrack.id ? "selected" : ""}>${tr.name}</option>`).join("")}</select><div class="mobile-best">YOUR BEST <b>${formatTime(g.save.data.records[g.selectedTrack.id]?.best)}</b></div><button class="button primary full" data-action="race">PLAY <span>→</span></button><p>Auto accelerate · Steer left · Brake & boost right</p></div><nav class="mobile-links" aria-label="Game menus"><button data-nav="garage">Vehicle</button><button data-nav="play">Modes</button><button data-nav="leaderboards">Records</button><button data-nav="ghosts">Ghosts</button></nav></section>`;
   }
   trackCard(tr, i, compact = false, career = false) {
     const locked = career && this.g.save.medals < CUPS[tr.cup].requirement;
@@ -323,16 +328,18 @@ export class UI {
   race() {
     const n = this.g.options.players;
     this.app.className = `race-ui players-${n}`;
+    this.app.classList.toggle("has-rivals", this.g.racers.length > 1);
     this.app.innerHTML = `<div class="race-top"><span class="race-brand">APEX<span>//</span>SHIFT</span><span>${this.g.selectedTrack.name.toUpperCase()} <i> / </i> ${this.g.mode.toUpperCase().replace("-", " ")}</span><button class="icon-button" data-action="pause" aria-label="Pause race">Ⅱ</button></div><div class="split-huds">${Array.from({ length: n }, (_, i) => `<div class="player-hud" id="hud-${i}" style="--player:${COLORS[i]}"><div class="hud-timing"><small>P${i + 1} · ${esc(this.g.options.names[i])}</small><strong class="hud-time">00:00.000</strong><span class="hud-lap">LAP 1 / ${this.g.options.laps}</span><span class="hud-checkpoint">CHECKPOINT 0 / 3</span><div class="hud-message"></div></div><div class="hud-position"><strong>1<span> / ${this.g.racers.length}</span></strong><small>POSITION</small></div><div class="hud-speed"><div class="speed-value">0</div><span>KM/H <b class="gear">N</b></span><div class="boost-label"><small>ϟ BOOST</small><small class="boost-percent">100%</small></div><div class="boost-bar"><i></i></div><small class="boost-key">HOLD ${keyLabel(this.g.input.bindings[i].boost)} TO BOOST</small></div><div class="hud-minimap">${trackMap(this.g.selectedTrack).replace("</svg>", '<circle class="map-driver" r="4" fill="#fff" stroke="#ff7139" stroke-width="2"/></svg>')}<span>GOLD ${formatTime(this.g.selectedTrack.medals[1] * this.g.options.laps)}</span></div></div>`).join("")}</div><div class="countdown" aria-live="assertive"></div><div class="race-controls"><span><kbd>W A S D</kbd> DRIVE</span><span><kbd>SPACE</kbd> BOOST</span><span><kbd>SHIFT</kbd> DRIFT</span><span><kbd>R</kbd> RESPAWN</span><span><kbd>ESC</kbd> PAUSE</span></div><div class="race-standings"></div><div class="finish-status"></div><div class="speed-lines"></div>`;
     if (this.g.shadowEnabled) {
       const el = document.createElement("div");
       el.className = "ghost-hud";
+      el.classList.toggle("has-ghost", !!this.g.ghostSamples);
       el.innerHTML = `<small>${this.g.onlineGhosts ? "ONLINE · RUN WILL BE SHARED" : "SHADOW MODE · PERSONAL BEST"}</small><span>${this.g.ghostSamples ? esc(this.g.ghostName) + " · " + formatTime(this.g.ghostTime) : "Finish this run to create your first shadow"}</span><strong class="ghost-delta">—</strong><small>TIME GAP AT YOUR POSITION · INCLUDES PENALTIES</small>`;
       this.app.append(el);
     }
     const controls = document.createElement("div");
     controls.className = "touch-controls";
-    controls.innerHTML = `<div class="touch-steering"><button data-drive="left" aria-label="Steer left">◀</button><button data-drive="right" aria-label="Steer right">▶</button></div><div class="touch-pedals"><button data-drive="drift">DRIFT</button><button data-drive="boost">BOOST</button><button data-drive="brake">BRAKE</button><button data-drive="throttle">GO</button></div><button class="touch-reset" data-action="touch-reset">RESET CAR</button>`;
+    controls.innerHTML = `<div class="touch-steering" role="group" aria-label="Steering"><button data-drive="left" aria-label="Steer left">◀</button><button data-drive="right" aria-label="Steer right">▶</button></div><div class="touch-pedals"><button data-drive="brake" aria-label="Brake; hold while steering to drift">BRAKE<small>+ DRIFT</small></button><button data-drive="boost" aria-label="Boost">BOOST<small class="touch-boost-level">100%</small></button></div>`;
     this.app.append(controls);
     this.huds = Array.from({ length: n }, (_, i) => {
       const root = this.app.querySelector(`#hud-${i}`);
@@ -353,6 +360,14 @@ export class UI {
   }
   updateHUD() {
     const g = this.g;
+    const boostLevel = this.app.querySelector(".touch-boost-level");
+    if (boostLevel) {
+      boostLevel.textContent = Math.round(g.racers[0].boost) + "%";
+      boostLevel.parentElement.style.setProperty(
+        "--charge",
+        g.racers[0].boost + "%",
+      );
+    }
     const gap = this.app.querySelector(".ghost-delta");
     if (gap && g.ghostSamples) {
       const r = g.racers[0],
@@ -461,6 +476,18 @@ export class UI {
     el.id = "pause-menu";
     el.innerHTML = `<section class="pause-panel"><div class="eyebrow">TAKE A BREATHER</div><h1>PAUSED.</h1><p>Your next great corner can wait.</p><button class="button primary full" data-action="resume">RESUME RACE <span>→</span></button><button class="button glass full" data-action="restart">RESTART RACE <span>↻</span></button><button class="text-button full" data-action="quit">RETURN TO MENU</button><p class="muted">WASD · Drive &nbsp; Space · Boost &nbsp; Shift · Drift</p></section>`;
     this.app.append(el);
+    if (this.g.input.touchDevice) {
+      el.querySelector(".eyebrow").remove();
+      el.querySelector("h1").textContent = "PAUSED";
+      el.querySelector("p").textContent =
+        "Auto acceleration. Left thumb steers; right thumb brakes, drifts, or boosts.";
+      el.querySelector(".muted").remove();
+      const reset = document.createElement("button");
+      reset.className = "button glass full";
+      reset.dataset.action = "touch-reset";
+      reset.textContent = "RESET CAR (+3s)";
+      el.querySelector('[data-action="restart"]').before(reset);
+    }
   }
   results() {
     const g = this.g,
@@ -502,6 +529,7 @@ export class UI {
     this.g.audio.play("menu");
     const d = el.dataset;
     if (d.action === "touch-reset") {
+      if (this.g.state === "paused") this.g.resume();
       this.g.input.pressed.add("KeyR");
       return;
     }

@@ -27,7 +27,7 @@ try {
           WebGL2RenderingContext,
       ),
     );
-    await page.locator('[data-nav="ghosts"]').click();
+    await page.locator('[data-nav="ghosts"]:visible').click();
     assert.equal(
       await page.locator('[data-action="online-run"]').isDisabled(),
       true,
@@ -43,7 +43,7 @@ try {
     await page.waitForTimeout(3800);
     if (mobile) {
       const cdp = await context.newCDPSession(page),
-        box = await page.locator('[data-drive="throttle"]').boundingBox();
+        box = await page.locator('[data-drive="boost"]').boundingBox();
       await cdp.send("Input.dispatchTouchEvent", {
         type: "touchStart",
         touchPoints: [
@@ -61,7 +61,7 @@ try {
       await page.keyboard.up("w");
     }
     assert.ok(Number(await page.locator(".speed-value").innerText()) > 0);
-    assert.match(await page.locator(".ghost-hud").innerText(), /SHADOW MODE/);
+    assert.match(await page.locator(".ghost-hud").textContent(), /SHADOW MODE/);
     await page.screenshot({
       path: `artifacts/pages-${mobile ? "mobile" : "desktop"}.png`,
     });

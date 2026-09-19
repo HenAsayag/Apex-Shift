@@ -28,31 +28,60 @@ try {
   await page.waitForFunction(() => __game.state === "racing");
   assert.ok(await page.evaluate(() => !!document.fullscreenElement));
   assert.ok(await page.evaluate(() => __game.shadowEnabled));
-  await page.locator('[data-drive="throttle"]').waitFor({ state: "visible" });
+  await page.locator('[data-drive="boost"]').waitFor({ state: "visible" });
+  assert.equal(await page.locator("[data-drive]").count(), 4);
   const cdp = await context.newCDPSession(page);
   const point = async (selector, id) => {
     const box = await page.locator(selector).boundingBox();
     assert.ok(box);
     return { x: box.x + box.width / 2, y: box.y + box.height / 2, id };
   };
-  const throttle = await point('[data-drive="throttle"]', 1),
+  const left = await point('[data-drive="left"]', 2),
     right = await point('[data-drive="right"]', 2),
+    brake = await point('[data-drive="brake"]', 3),
     boost = await point('[data-drive="boost"]', 3);
   await cdp.send("Input.dispatchTouchEvent", {
     type: "touchStart",
-    touchPoints: [throttle, right, boost],
+    touchPoints: [right, boost],
   });
   await page.waitForTimeout(250);
   const input = await page.evaluate(() => __game.input.read(0));
   assert.equal(input.throttle, 1);
-  assert.equal(input.steer, 1);
+  assert.equal(input.steer, -1);
   assert.equal(input.boost, true);
   assert.ok(await page.evaluate(() => __game.racers[0].speed > 0));
   await cdp.send("Input.dispatchTouchEvent", {
     type: "touchCancel",
     touchPoints: [],
   });
-  assert.equal(await page.evaluate(() => __game.input.read(0).throttle), 0);
+  assert.equal(await page.evaluate(() => __game.input.read(0).throttle), 1);
+  await cdp.send("Input.dispatchTouchEvent", {
+    type: "touchStart",
+    touchPoints: [left, brake],
+  });
+  const braking = await page.evaluate(() => __game.input.read(0));
+  assert.equal(braking.throttle, 0);
+  assert.equal(braking.drift, true);
+  assert.equal(braking.steer, 1);
+  await cdp.send("Input.dispatchTouchEvent", {
+    type: "touchMove",
+    touchPoints: [right, brake],
+  });
+  assert.equal(await page.evaluate(() => __game.input.read(0).steer), -1);
+  await cdp.send("Input.dispatchTouchEvent", {
+    type: "touchCancel",
+    touchPoints: [],
+  });
+  for (const button of await page.locator("[data-drive]").all()) {
+    const box = await button.boundingBox();
+    assert.ok(
+      box.width >= 44 &&
+        box.height >= 44 &&
+        box.x >= 0 &&
+        box.x + box.width <= 844 &&
+        box.y + box.height <= 390,
+    );
+  }
   await page.screenshot({ path: "artifacts/mobile-driving.png" });
   await page.evaluate(() => document.exitFullscreen());
   await page.locator("[data-fullscreen]").waitFor();
@@ -88,7 +117,8 @@ try {
   await page.evaluate(() => __game.quit());
   await page.evaluate(() => document.exitFullscreen());
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.locator('[data-nav="ghosts"]').click();
+  await page.screenshot({ path: "artifacts/mobile-home-portrait.png" });
+  await page.locator('[data-nav="ghosts"]:visible').click();
   assert.equal(
     await page.evaluate(() => document.documentElement.scrollWidth),
     390,

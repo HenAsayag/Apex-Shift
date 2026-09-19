@@ -1,6 +1,7 @@
 import "./ui/styles.css";
 import "./ui/ghost.css";
 import "./ui/mobile.css";
+import "./ui/mobile-race.css";
 import { Game } from "./core/game.js";
 try {
   const game = new Game();

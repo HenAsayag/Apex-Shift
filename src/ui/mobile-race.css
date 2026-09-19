@@ -1,0 +1,209 @@
+.touch-device .race-top {
+  height: 58px;
+  align-items: flex-start;
+  padding-top: max(8px, env(safe-area-inset-top));
+}
+.touch-device .race-top > span {
+  display: none;
+}
+.touch-device .race-top button {
+  margin-left: auto;
+  background: #102329bb;
+  border: 1px solid #ffffff44;
+  border-radius: 12px;
+}
+.touch-device .hud-timing {
+  top: max(14px, env(safe-area-inset-top));
+  left: max(20px, env(safe-area-inset-left));
+}
+.touch-device .hud-timing > small,
+.touch-device .hud-checkpoint,
+.touch-device .hud-message {
+  display: none;
+}
+.touch-device .hud-time {
+  font-size: 30px;
+  line-height: 1.1;
+}
+.touch-device .hud-lap {
+  font-size: 11px;
+  margin-top: 5px;
+}
+.touch-device .hud-position {
+  top: 14px;
+  right: 88px;
+}
+.touch-device .hud-position strong {
+  font-size: 25px;
+}
+.touch-device .hud-position small,
+.touch-device .race-ui:not(.has-rivals) .hud-position {
+  display: none;
+}
+.touch-device .ghost-hud {
+  top: 72px;
+  left: max(20px, env(safe-area-inset-left));
+  right: auto;
+  transform: none;
+  max-width: 180px;
+  width: auto;
+  border: 0;
+  padding: 4px 8px;
+  gap: 0;
+  background: #102329bb;
+}
+.touch-device .ghost-hud small,
+.touch-device .ghost-hud span,
+.touch-device .ghost-hud:not(.has-ghost) {
+  display: none;
+}
+.touch-device .ghost-delta {
+  font-size: 15px;
+}
+.touch-device .race-standings {
+  display: none;
+}
+.touch-device .hud-speed {
+  bottom: max(24px, env(safe-area-inset-bottom));
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: 76px;
+  text-align: center;
+}
+.touch-device .speed-value {
+  font-size: 30px;
+  line-height: 1;
+}
+.touch-device .hud-speed > span {
+  font-size: 9px;
+}
+.touch-device .hud-speed .gear,
+.touch-device .boost-label,
+.touch-device .boost-bar {
+  display: none;
+}
+.touch-steering {
+  left: max(22px, env(safe-area-inset-left));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  gap: 10px;
+  direction: ltr;
+}
+.touch-steering button {
+  width: 78px;
+  height: 78px;
+  border-radius: 24px;
+  background: #122a32ad;
+  font-size: 26px;
+}
+.touch-pedals {
+  display: flex;
+  align-items: end;
+  gap: 14px;
+  right: max(22px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+}
+.touch-pedals button {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  background: #122a32b8;
+}
+.touch-pedals button small {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  color: #d5e8ea;
+}
+.touch-pedals [data-drive="boost"] {
+  width: 90px;
+  height: 90px;
+  background:
+    linear-gradient(#122a32, #122a32) padding-box,
+    conic-gradient(#ff7139 var(--charge, 100%), #4c6266 0) border-box;
+  border: 4px solid transparent;
+}
+.touch-controls button.held {
+  background: #ff7139;
+  box-shadow: 0 0 20px #ff713966;
+  color: #101b23;
+}
+.touch-device .race-ui:has(#pause-menu) .touch-controls {
+  display: none;
+}
+.touch-device .countdown {
+  font-size: 88px;
+}
+@media (orientation: portrait) {
+  .touch-steering {
+    left: 14px;
+    gap: 8px;
+    bottom: max(28px, env(safe-area-inset-bottom));
+  }
+  .touch-steering button {
+    width: 64px;
+    height: 72px;
+  }
+  .touch-pedals {
+    right: 14px;
+    gap: 10px;
+    bottom: max(28px, env(safe-area-inset-bottom));
+  }
+  .touch-pedals button {
+    width: 66px;
+    height: 66px;
+    min-width: 60px;
+  }
+  .touch-pedals [data-drive="boost"] {
+    width: 74px;
+    height: 74px;
+  }
+  .touch-device .hud-speed {
+    bottom: 126px;
+  }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .mobile-home {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 12px 24px;
+    max-width: 800px;
+    padding: 8px;
+  }
+  .mobile-race-card {
+    grid-column: 2;
+    grid-row: 1/3;
+    margin: 0;
+    padding: 14px;
+  }
+  .mobile-links {
+    grid-column: 1;
+    grid-template-columns: 1fr 1fr;
+  }
+  .mobile-intro .eyebrow {
+    display: none;
+  }
+  .mobile-intro h1 {
+    font-size: 28px;
+  }
+  .mobile-race-card select {
+    height: 46px;
+    margin-bottom: 10px;
+  }
+  .mobile-best {
+    margin-bottom: 12px;
+  }
+  .mobile-race-card p {
+    margin-top: 8px;
+    font-size: 11px;
+  }
+  .mobile-race-card .button {
+    height: 48px;
+    min-height: 48px;
+  }
+}

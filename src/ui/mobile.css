@@ -27,6 +27,110 @@
 .fullscreen-error {
   color: #ffb59b;
 }
+
+/* Touch-first menus and a four-button, two-thumb driving layout. */
+.touch-device .home-page {
+  overflow: auto;
+}
+.touch-device .topbar {
+  height: 60px;
+  min-height: 60px;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+.touch-device .topbar nav,
+.touch-device .driver-info,
+.touch-device .driver-avatar,
+.touch-device .brand small,
+.touch-device .footer {
+  display: none;
+}
+.touch-device .header-right {
+  margin-left: auto;
+}
+.mobile-home {
+  max-width: 620px;
+  width: 100%;
+  margin: auto;
+  padding: 20px 8px 28px;
+}
+.mobile-intro h1 {
+  font-size: clamp(28px, 6vw, 42px);
+  margin: 12px 0;
+  line-height: 1.05;
+}
+.mobile-intro p {
+  font-size: 15px;
+  color: #d7e5e5;
+}
+.mobile-race-card {
+  padding: 20px;
+  margin: 24px 0 16px;
+  border: 1px solid #738c8950;
+  border-radius: 16px;
+  background: #12252aed;
+}
+.mobile-race-card label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #a9c2c4;
+}
+.mobile-race-card select {
+  display: block;
+  width: 100%;
+  height: 52px;
+  margin: 10px 0 14px;
+  padding: 10px;
+  color: #fff;
+  font-size: 17px;
+  background: #23383f;
+  border: 1px solid #91b9b955;
+  border-radius: 8px;
+}
+.mobile-best {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #b6c9ca;
+  margin-bottom: 20px;
+}
+.mobile-race-card .button {
+  height: 60px;
+  font-size: 21px;
+  border-radius: 10px;
+}
+.mobile-race-card p {
+  font-size: 12px;
+  color: #b8cccc;
+  text-align: center;
+  line-height: 1.6;
+  margin-top: 14px;
+}
+.mobile-links {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.mobile-links button {
+  min-height: 50px;
+  border: 1px solid #62818380;
+  border-radius: 10px;
+  background: #14292fec;
+  font-size: 13px;
+}
+.touch-device .pause-panel {
+  max-height: 90dvh;
+  overflow: auto;
+  padding: 22px;
+  border-radius: 16px;
+}
+.touch-device .pause-panel h1 {
+  font-size: 30px;
+}
+.touch-device .pause-panel .button {
+  min-height: 48px;
+}
 .touch-controls {
   display: none;
 }

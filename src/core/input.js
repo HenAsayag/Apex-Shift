@@ -1,4 +1,6 @@
 import { DEFAULT_BINDINGS, clamp } from "../config.js";
+// Track lateral coordinates point left as seen from the chase camera.
+export const driverSteering = (value) => -clamp(value, -1, 1);
 export class Input {
   constructor(bindings = DEFAULT_BINDINGS) {
     this.bindings = structuredClone(bindings);
@@ -6,6 +8,9 @@ export class Input {
     this.pressed = new Set();
     this.capturing = null;
     this.touch = new Map();
+    this.touchDevice =
+      navigator.maxTouchPoints > 0 || matchMedia("(pointer: coarse)").matches;
+    this.touchDriving = this.touchDevice;
     document.documentElement.classList.toggle(
       "touch-device",
       navigator.maxTouchPoints > 0 || matchMedia("(pointer: coarse)").matches,
@@ -13,10 +18,35 @@ export class Input {
     document.addEventListener("pointerdown", (e) => {
       const button = e.target.closest("[data-drive]");
       if (!button) return;
+      this.touchDriving = true;
       e.preventDefault();
       button.setPointerCapture(e.pointerId);
       this.touch.set(e.pointerId, button.dataset.drive);
       button.classList.add("held");
+    });
+    // Keep the thumb down while sliding between left and right.
+    document.addEventListener("pointermove", (e) => {
+      if (!["left", "right", "neutral"].includes(this.touch.get(e.pointerId)))
+        return;
+      const zone = document.querySelector(".touch-steering");
+      if (!zone) return;
+      const box = zone.getBoundingClientRect(),
+        center = box.x + box.width / 2;
+      const action =
+        e.clientX < center - 8
+          ? "left"
+          : e.clientX > center + 8
+            ? "right"
+            : "neutral";
+      this.touch.set(e.pointerId, action);
+      zone
+        .querySelectorAll("[data-drive]")
+        .forEach((button) =>
+          button.classList.toggle(
+            "held",
+            Array.from(this.touch.values()).includes(button.dataset.drive),
+          ),
+        );
     });
     const release = (e) => {
       this.touch.delete(e.pointerId);
@@ -26,12 +56,22 @@ export class Input {
         !Array.from(this.touch.values()).includes(button.dataset.drive)
       )
         button.classList.remove("held");
+      document
+        .querySelectorAll("[data-drive]")
+        .forEach((el) =>
+          el.classList.toggle(
+            "held",
+            Array.from(this.touch.values()).includes(el.dataset.drive),
+          ),
+        );
     };
     document.addEventListener("pointerup", release);
     document.addEventListener("pointercancel", release);
     document.addEventListener("lostpointercapture", release);
     window.addEventListener("keydown", (e) => {
       if (/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+      if (this.bindings.some((b) => Object.values(b).includes(e.code)))
+        this.touchDriving = false;
       if (this.capturing) {
         e.preventDefault();
         const callback = this.capturing;
@@ -83,6 +123,13 @@ export class Input {
       input.drift ||= held.has("drift");
     }
     const pad = navigator.getGamepads?.()[index];
+    if (index === 0 && this.touchDriving && !pad) {
+      const braking = Array.from(this.touch.values()).includes("brake");
+      input.throttle = braking ? 0 : 1;
+      input.drift = braking && Math.abs(input.steer) > 0;
+      input.brake = braking ? (input.drift ? 0.45 : 1) : 0;
+      if (braking) input.boost = false;
+    }
     if (pad) {
       const axis = pad.axes[0] || 0;
       input.steer += Math.abs(axis) > 0.12 ? axis : 0;
@@ -94,7 +141,7 @@ export class Input {
       input.boost ||= !!pad.buttons[1]?.pressed;
       input.drift ||= !!pad.buttons[2]?.pressed;
     }
-    input.steer = clamp(input.steer, -1, 1);
+    input.steer = driverSteering(input.steer);
     return input;
   }
   vibrate(index, strength = 0.2) {
