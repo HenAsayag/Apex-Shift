@@ -112,7 +112,7 @@ export class Game {
     this.ui.loading();
     await new Promise((resolve) => setTimeout(resolve, 250));
     if (generation !== this.raceGeneration) return;
-    if (!document.fullscreenElement) {
+    if (!this.display.ready) {
       this.state = "menu";
       this.display.require(() => this.startRace());
       return;

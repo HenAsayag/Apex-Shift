@@ -6,6 +6,6 @@ Implementation choices for this racer: automatic acceleration removes the held t
 
 The track frame's `right` vector is the driver's screen-left when viewed from the chase camera: the camera looks along positive track forward, while Three.js cameras look down local negative Z. Player input is negated once at the input boundary for touch, keyboard, and gamepad. AI physics inputs, track geometry, and saved replay coordinates keep their existing convention. Tests must verify world movement against the camera's right axis, not just assert that a button returns a positive input number.
 
-The home screen on touch devices provides a circuit selector, one large Play button, and secondary menu links. Fullscreen remains mandatory. Touch controls stay inside safe areas and allow sliding between the steering buttons without lifting the thumb. A neutral strip at the center releases steering while retaining capture.
+The home screen on touch devices provides a circuit selector, one large Play button, and secondary menu links. The start dialog offers fullscreen or explicit browser play through the “Using iPhone?” button; browser play remains selected for the page session. Touch controls stay inside safe areas and allow sliding between the steering buttons without lifting the thumb. A neutral strip at the center releases steering while retaining capture.
 
 Validation uses Chromium touch emulation and camera-space direction assertions. This does not establish comfort or performance on all physical phones; real-device feedback remains valuable.

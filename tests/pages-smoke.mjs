@@ -18,6 +18,10 @@ try {
     page.on("response", (r) => {
       if (r.status() >= 400) badResponses.push(r.status() + " " + r.url());
     });
+    if (mobile)
+      await page.addInitScript(() => {
+        Element.prototype.requestFullscreen = undefined;
+      });
     await page.goto(url);
     await page.locator('[data-action="race"]').first().waitFor();
     assert.ok(
@@ -38,7 +42,9 @@ try {
     );
     await page.locator('[data-nav="home"]').first().click();
     await page.locator('[data-action="race"]').first().click();
-    await page.locator("[data-fullscreen]").click();
+    await page
+      .locator(mobile ? "[data-windowed]" : "[data-fullscreen]")
+      .click();
     await page.locator(".player-hud").waitFor();
     assert.match(await page.locator(".hud-lap").innerText(), /1 \/ 3/);
     await page.waitForTimeout(3800);
@@ -66,8 +72,16 @@ try {
     await page.screenshot({
       path: `artifacts/pages-${mobile ? "mobile" : "desktop"}.png`,
     });
-    await page.evaluate(() => document.exitFullscreen());
-    await page.locator("[data-fullscreen]").waitFor();
+    if (mobile) {
+      assert.equal(
+        await page.evaluate(() => !!document.fullscreenElement),
+        false,
+      );
+      await page.locator('[data-action="pause"]').click();
+    } else {
+      await page.evaluate(() => document.exitFullscreen());
+      await page.locator("[data-fullscreen]").waitFor();
+    }
     const time = await page.locator(".hud-time").innerText();
     await page.waitForTimeout(150);
     assert.equal(await page.locator(".hud-time").innerText(), time);

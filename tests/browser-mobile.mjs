@@ -129,6 +129,7 @@ try {
   await page.screenshot({ path: "artifacts/mobile-portrait.png" });
   // A browser without the required API must not silently bypass fullscreen.
   await page.evaluate(() => {
+    delete __game.input.read;
     document.documentElement.requestFullscreen = undefined;
     __game.ui.nav("home");
   });
@@ -139,6 +140,20 @@ try {
     /could not start/,
   );
   assert.equal(await page.evaluate(() => __game.state), "menu");
+  await page.locator("[data-windowed]").click();
+  await page.waitForFunction(() => __game.state === "racing");
+  await page.waitForFunction(() => __game.racers[0].speed > 0);
+  assert.equal(await page.evaluate(() => !!document.fullscreenElement), false);
+  assert.equal(await page.evaluate(() => __game.options.laps), 3);
+  assert.ok(await page.evaluate(() => __game.racers[0].speed > 0));
+  await page.locator('[data-action="pause"]').click();
+  await page.locator('[data-action="resume"]').click();
+  await page.waitForFunction(() => __game.state === "racing");
+  await page.locator('[data-action="pause"]').click();
+  await page.locator('[data-action="restart"]').click();
+  await page.waitForFunction(() => __game.state === "countdown");
+  assert.equal(await page.locator(".fullscreen-gate").count(), 0);
+  assert.equal(await page.evaluate(() => !!document.fullscreenElement), false);
   assert.deepEqual(errors, []);
   console.log(
     "Mobile checks passed: WebGL2, fullscreen gating, multitouch, cancel, pause, main Race shadow, portrait, unsupported API.",
